@@ -10,7 +10,7 @@
 // Lesson Class
 
 function Lesson(attributes) {
-  let prop
+  var prop
   for(prop in attributes.lesson) {
     if(prop === "user_id") {
       this["author_id"] = attributes.lesson[prop]
@@ -19,15 +19,15 @@ function Lesson(attributes) {
     }
   }
   if(this.comments) {
-    this.comments = this.comments.reverse().map((comment) => new Comment({ comment: comment }))
+    this.comments = this.comments.reverse().map(function(comment) { return new Comment({ comment: comment }) })
   }
 }
 
 // Instance methods
 
 Lesson.prototype.appendToPage = function() {
-  const html = Lesson.template(this)
-  const $wrapper = $(".lesson-container")
+  var html = Lesson.template(this)
+  var $wrapper = $(".lesson-container")
 
   if($wrapper.is(':visible')) $wrapper.hide()
   $(html).appendTo($wrapper)
@@ -38,7 +38,7 @@ Lesson.prototype.appendToPage = function() {
 Lesson.ready = function() {
   if($("#lesson-template").length <= 0) return;
 
-  let source = $("#lesson-template").html()
+  var source = $("#lesson-template").html()
   Lesson.template = Handlebars.compile(source)
 
   $(document).on("click", ".next-lesson", Lesson.loadNextLesson)
@@ -47,7 +47,8 @@ Lesson.ready = function() {
   Lesson.loadLesson()
 }
 
-Lesson.loadLesson = function(url =  window.location.href) {
+Lesson.loadLesson = function(url) {
+  url = (typeof url !== 'undefined') ?  url : window.location.href;
   $(".loader").show()
   $.ajax({
     url: url,
@@ -56,7 +57,7 @@ Lesson.loadLesson = function(url =  window.location.href) {
   })
   .done(Lesson.successLoad)
   .fail(Lesson.failLoad)
-  .always(() => { $(".loader").hide() })
+  .always(function() { $(".loader").hide() })
 }
 
 Lesson.successLoad = function(json) {
@@ -70,7 +71,7 @@ Lesson.successLoad = function(json) {
 }
 
 Lesson.failLoad = function(xhr) {
-  let error
+  var error
   switch(xhr.readyState) {
     case 0:
       error = "Network Error"
@@ -92,8 +93,8 @@ Lesson.failLoad = function(xhr) {
 Lesson.loadNextLesson = function(ev) {
   ev.preventDefault()
 
-  const next_lesson = Lesson.currentLesson.next_id
-  const author = Lesson.currentLesson.author.id
+  var next_lesson = Lesson.currentLesson.next_id
+  var author = Lesson.currentLesson.author.id
 
   if(next_lesson) {
     Lesson.loadLesson("/users/" + author + "/lessons/" + next_lesson)
@@ -104,8 +105,8 @@ Lesson.loadNextLesson = function(ev) {
 Lesson.loadPrevLesson = function(ev) {
   ev.preventDefault()
 
-  const prev_lesson = Lesson.currentLesson.prev_id
-  const author = Lesson.currentLesson.author.id
+  var prev_lesson = Lesson.currentLesson.prev_id
+  var author = Lesson.currentLesson.author.id
 
   if(prev_lesson) {
     Lesson.loadLesson("/users/" + author + "/lessons/" + prev_lesson)
@@ -143,24 +144,24 @@ Lesson.loadUserLessons = function(ev) {
   })
   .done(Lesson.successLoadUserLessons)
   .fail(Lesson.failLoadUserLessons)
-  .always(() => { $(".loader").hide() })
+  .always(function() { $(".loader").hide() })
 }
 
 Lesson.successLoadUserLessons = function(json) {
-  let lessons_by_categories = {}, category
+  var lessons_by_categories = {}, category
 
   for(category in json) {
-    lessons_by_categories[category] = json[category].map((lesson) => new Lesson(lesson))
+    lessons_by_categories[category] = json[category].map(function(lesson) { return new Lesson(lesson) })
   }
 
-  const html = Lesson.lessonByCategoriesTemplate(lessons_by_categories)
+  var html = Lesson.lessonByCategoriesTemplate(lessons_by_categories)
   $(".lessons-by-categories").empty()
   $(".lesson-by-categories-error").text("")
   $(html).appendTo($(".lessons-by-categories"))
 }
 
 Lesson.failLoadUserLessons = function(xhr) {
-  let error
+  var error
   switch(xhr.readyState) {
     case 0:
       error = "Network Error"

@@ -1,5 +1,5 @@
 function Request(attributes) {
-  let prop
+  var prop
   for(prop in attributes.request) {
     this[prop] = attributes.request[prop]
   }
@@ -8,9 +8,10 @@ function Request(attributes) {
   if(attributes.meta) this.studyship_id = attributes.meta.studyship_id // When user accepts requests.
 }
 
-Request.prototype.destroy = function(accepted = false) {
+Request.prototype.destroy = function(accepted) {
+  accepted = (typeof accepted !== 'undefined') ?  accepted : false;
   if(accepted) {
-    const html = Request.studentTemplate(this)
+    var html = Request.studentTemplate(this)
     // debugger
     $(html).appendTo($(".list-group")).hide().slideDown(500)
   }
@@ -34,7 +35,7 @@ Request.loadRequests = function(ev) {
   })
   .done(Request.successLoad)
   .fail(Request.failLoad)
-  .always(() => { $(".loader").hide() })
+  .always(function() { $(".loader").hide() })
 }
 
 Request.successLoad = function(json) {
@@ -44,12 +45,12 @@ Request.successLoad = function(json) {
   }
 
   $(".requests-error").text("")
-  const requests = json.requests.reverse().map((request) => new Request({ request: request }))
+  var requests = json.requests.reverse().map(function(request){ return new Request({ request: request }) })
   Request.appendToPage(requests)
 }
 
 Request.failLoad = function(xhr) {
-  let error
+  var error
   switch(xhr.readyState) {
     case 0:
       error = "Network Error"
@@ -66,8 +67,8 @@ Request.failLoad = function(xhr) {
 }
 
 Request.appendToPage = function(requests) {
-  const html = Request.indexTemplate(requests)
-  const $wrapper = $("#new-requests")
+  var html = Request.indexTemplate(requests)
+  var $wrapper = $("#new-requests")
   $(".requests-error, .no-request").text("")
   $wrapper.slideUp(500, function() {
     $wrapper.empty()
@@ -91,13 +92,13 @@ Request.declineRequest = function(ev) {
 }
 
 Request.successCloseRequest = function(json) {
-  const request = new Request(json)
+  var request = new Request(json)
   this.parent().children().last().text("") // Clear Error
   request.destroy($(this).hasClass("accept"))
 }
 
 Request.failCloseRequest = function(xhr) {
-  let error
+  var error
   switch(xhr.readyState) {
     case 0:
       error = "Network Error"

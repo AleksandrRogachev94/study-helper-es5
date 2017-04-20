@@ -4,27 +4,29 @@
 // Comment Class
 
 function Comment(attributes) {
-  let prop
+  var prop
   for(prop in attributes.comment) {
     this[prop] = attributes.comment[prop]
   }
+
+  if(this.created_at) this.created_at = Comment.formatDate(this.created_at)
 }
 
 // Instance methods
 
 Comment.prototype.render = function() {
-  const li = Comment.template(this)
-  const rendered = $(li).prependTo("#comments").hide()
+  var li = Comment.template(this)
+  var rendered = $(li).prependTo("#comments").hide()
   rendered.slideDown()
 }
 
 Comment.prototype.replaceContentWithForm = function($content) {
-  const form = Comment.updateTemplate(this)
+  var form = Comment.updateTemplate(this)
   $content.replaceWith(form)
 }
 
 Comment.prototype.replaceFormWithContent = function($form) {
-  const content = '<p class="content">' + this.content + '</p>'
+  var content = '<p class="content">' + this.content + '</p>'
   $form.replaceWith(content)
 }
 
@@ -46,7 +48,7 @@ Comment.ready = function() {
 }
 
 Comment.prepareHandlebars = function() {
-  let source = $("#comments-template").html()
+  var source = $("#comments-template").html()
   Comment.commentsTemplate = Handlebars.compile(source)
 
   source = $("#comment-partial").html()
@@ -78,7 +80,7 @@ Comment.attachListeners = function() {
 
 Comment.formSubmit = function(ev) {
   ev.preventDefault()
-  const $form = $(this)
+  var $form = $(this)
 
   Comment.SubmitFormAJAX($form, Comment.successCreate, Comment.failCreate)
 }
@@ -86,7 +88,7 @@ Comment.formSubmit = function(ev) {
 Comment.successCreate = function(json) {
   $.rails.enableFormElements($("#new_comment"))
 
-  const comment = new Comment(json)
+  var comment = new Comment(json)
 
   $("#new_comment textarea").val("")// Empty input
   $("#create-comment-error").text("") // Empty error div
@@ -96,7 +98,7 @@ Comment.successCreate = function(json) {
 Comment.failCreate = function(xhr) {
   $.rails.enableFormElements($("#new_comment"))
 
-  let error = Comment.processError(xhr)
+  var error = Comment.processError(xhr)
   $("#create-comment-error").text(error)
 }
 
@@ -106,7 +108,7 @@ Comment.failCreate = function(xhr) {
 Comment.destroy = function(ev) {
   ev.preventDefault()
 
-  const $form = $(this)
+  var $form = $(this)
   if(!Comment.confirmDestroy($form)) return;
 
   Comment.SubmitFormAJAX($form, Comment.successDestroy, Comment.failDestroy.bind($form))
@@ -121,12 +123,12 @@ Comment.confirmDestroy = function($form) {
 }
 
 Comment.successDestroy = function(json) {
-  const comment = new Comment(json)
+  var comment = new Comment(json)
   comment.destroy()
 }
 
 Comment.failDestroy = function(xhr) {
-  let error = Comment.processError(xhr)
+  var error = Comment.processError(xhr)
 
   // 'this' binded to form
   this.parent().parent().parent().next().next().text(error) // Place Errors.
@@ -137,19 +139,19 @@ Comment.failDestroy = function(xhr) {
 
 Comment.addUpdateForm = function(ev) {
   ev.preventDefault()
-  const id = $(this).data("id")
+  var id = $(this).data("id")
 
-  const comment = Comment.from_li(id)
+  var comment = Comment.from_li(id)
   Comment.commentsToUpdate.push(comment) // Add to array of comments opened to update.
   comment.replaceContentWithForm($(this).parent().parent().parent().next())
   $("#comment_" + id + " .form-update-comment textarea").focus()
 }
 
 Comment.from_li = function(id) {
-  let $li = $("li#comment_" + id)
+  var $li = $("li#comment_" + id)
   if($li.length <= 0) return new Comment({});
 
-  const json = {
+  var json = {
     comment: {
       id: id,
       content: $li.find(".content").text(),
@@ -167,12 +169,12 @@ Comment.from_li = function(id) {
 Comment.update = function(ev) {
   ev.preventDefault()
 
-  const $form = $(this)
+  var $form = $(this)
   Comment.SubmitFormAJAX($form, Comment.successUpdate.bind($form), Comment.failUpdate.bind($form))
 }
 
 Comment.successUpdate = function(json) {
-  const comment = new Comment(json)
+  var comment = new Comment(json)
 
   // 'this' binded to form
   Comment.removeFromCommentsToUpdate(comment.id)
@@ -181,11 +183,11 @@ Comment.successUpdate = function(json) {
 
 Comment.failUpdate = function(xhr) {
 
-  let error = Comment.processError(xhr)
+  var error = Comment.processError(xhr)
 
   // 'this' binded to form
-  const id = this.parent().data("id")
-  const comment = Comment.removeFromCommentsToUpdate(id) // Remove from array of opened comments
+  var id = this.parent().data("id")
+  var comment = Comment.removeFromCommentsToUpdate(id) // Remove from array of opened comments
   comment.replaceFormWithContent(this)
   $("#comment_" + id + " .comment-error").text(error) // Place Errors.
 }
@@ -193,19 +195,17 @@ Comment.failUpdate = function(xhr) {
 Comment.cancelUpdate = function(ev) {
   ev.preventDefault()
   // 'this' binded to form
-  const id = $(this).parent().parent().data("id")
-  const comment = Comment.removeFromCommentsToUpdate(id) // Remove from array of opened comments
+  var id = $(this).parent().parent().data("id")
+  var comment = Comment.removeFromCommentsToUpdate(id) // Remove from array of opened comments
   comment.replaceFormWithContent($(this).parent())
 }
 
 Comment.removeFromCommentsToUpdate = function(id) {
-  let array = Comment.commentsToUpdate
-  let i, l = array.length
+  var i, l = Comment.commentsToUpdate.length
   for(i = 0; i < l; i++) {
 
-    if(array[i].id === id) {
-      Comment.commentsToUpdate = [...array.slice(0, i), ...array.slice(i + 1)]
-      return array[i]
+    if(Comment.commentsToUpdate[i].id === id) {
+      return Comment.commentsToUpdate.splice(i, 1)[0]
     }
   }
 }
@@ -214,10 +214,10 @@ Comment.removeFromCommentsToUpdate = function(id) {
 // Index Action
 
 Comment.appendToPage = function(lesson) {
-  const $wrapper = $(".lesson-container")
+  var $wrapper = $(".lesson-container")
 
-  const html = Comment.commentsTemplate(lesson)
-  const rendered = $(html).appendTo($wrapper)
+  var html = Comment.commentsTemplate(lesson)
+  var rendered = $(html).appendTo($wrapper)
 
   $wrapper.slideDown(1000)
 }
@@ -251,20 +251,20 @@ Comment.SubmitFormAJAX = function($form, success, fail) {
   .fail(fail)
 }
 
-Comment.fixDates = function() {
-  let js_date
-  const dates = $(".created_at")
+// Comment.fixDates = function() {
+//   var js_date
+//   var dates = $(".created_at")
+//
+//   dates.each(function() {
+//     js_date = new Date($(this).text())
+//     $(this).text(Comment.formatDate(js_date))
+//   })
+// }
 
-  dates.each(function() {
-    js_date = new Date($(this).text())
-    $(this).text(Comment.format_date(js_date))
-  })
-}
-
-var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
-Comment.format_date = function(date) {
-  return `${month[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+Comment.formatDate = function(date) {
+  var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  var formatted = new Date(date)
+  return month[formatted.getMonth()] + " " + formatted.getDate() + ", " + formatted.getFullYear()
 }
 
 //------------------------------------------------------------------------

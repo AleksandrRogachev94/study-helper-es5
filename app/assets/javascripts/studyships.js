@@ -4,7 +4,7 @@ $(document).ready(function() {
   if($("#request-partial").length <= 0 || $("#requests-template").length <= 0) return;
   $(".loader").hide()
 
-  let source = $("#requests-template").html()
+  var source = $("#requests-template").html()
   Request.indexTemplate = Handlebars.compile(source)
   source = $("#request-partial").html()
   Request.template = Handlebars.compile(source)
@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 function removeStudent(ev) {
   ev.preventDefault()
-  const $form = $(this)
+  var $form = $(this)
   if(!confirmRemove($form)) return;
 
   $.ajax({
@@ -49,8 +49,9 @@ function successRemove(json) {
 }
 
 function failRemove(xhr) {
-  setTimeout(() => { $.rails.enableFormElements(this) }, 100) // Preventing disabling of a button
-  let error
+  $form = this
+  setTimeout(function() { $.rails.enableFormElements($form) }, 100) // Preventing disabling of a button
+  var error
   switch(xhr.readyState) {
     case 0:
       error = "Network Error"
