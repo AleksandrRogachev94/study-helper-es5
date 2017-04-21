@@ -16,6 +16,7 @@ if Rails.env.production?
         db_config = Rails.application.config.database_configuration[Rails.env]
         db_config['reaping_frequency'] = ENV['DATABASE_REAP_FREQ'] || 10 # seconds
         db_config['pool'] = pool_size
+        ActiveRecord::Base.establish_connection(db_config)
         Rails.logger.info("DB Connection Pool size for Sidekiq Server is now: #{ActiveRecord::Base.connection.pool.instance_variable_get('@size')}")
       end
     end
