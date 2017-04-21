@@ -68,7 +68,7 @@ stan.lessons.create(title: "Optics", category: phys,
                     Most optical phenomena can be accounted for using the classical electromagnetic description of light. Complete electromagnetic descriptions of light are, however, often difficult to apply in practice. Practical optics is usually done using simplified models. The most common of these, geometric optics, treats light as a collection of rays that travel in straight lines and bend when they pass through or reflect from surfaces. Physical optics is a more comprehensive model of light, which includes wave effects such as diffraction and interference that cannot be accounted for in geometric optics. Historically, the ray-based model of light was developed first, followed by the wave model of light. Progress in electromagnetic theory in the 19th century led to the discovery that light waves were in fact electromagnetic radiation.
 Some phenomena depend on the fact that light has both wave-like and particle-like properties. Explanation of these effects requires quantum mechanics. When considering light's particle-like properties, the light is modelled as a collection of particles called "photons". Quantum optics deals with the application of quantum mechanics to optical systems.
                     HEREDOC
-                    link: "https://en.wikipedia.org/wiki/Optics"
+                    links: "https://en.wikipedia.org/wiki/Optics"
                     )
 
 # roger.lessons.create(title: "1-st half of 19-th century", category: his,
