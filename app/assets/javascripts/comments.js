@@ -8,7 +8,8 @@ function Comment(attributes) {
   for(prop in attributes.comment) {
     this[prop] = attributes.comment[prop]
   }
-  // if(this.created_at) this.created_at = Comment.formatDate(this.created_at)
+
+  if(this.created_at) this.created_at = Comment.formatDate(this.created_at)
 }
 
 // Instance methods
@@ -260,11 +261,11 @@ Comment.SubmitFormAJAX = function($form, success, fail) {
 //   })
 // }
 
-// Comment.formatDate = function(date) {
-//   var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-//   var formatted = new Date(date)
-//   return month[formatted.getMonth()] + " " + formatted.getDate() + ", " + formatted.getFullYear()
-// }
+Comment.formatDate = function(date) {
+  var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  var formatted = new Date(date)
+  return month[formatted.getMonth()] + " " + formatted.getDate() + ", " + formatted.getFullYear()
+}
 
 //------------------------------------------------------------------------
 // Documents Ready
