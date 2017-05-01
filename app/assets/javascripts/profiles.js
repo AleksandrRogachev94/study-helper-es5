@@ -13,7 +13,7 @@ function Profile(attributes) {
 Profile.prepareAndRenderForm = function(ev) {
   ev.preventDefault()
   Profile.get()
-    .done(json => {
+    .done(function(json) {
       var profile = new Profile(json)
       profile.renderForm(json)
       $("#modal-form").modal()
